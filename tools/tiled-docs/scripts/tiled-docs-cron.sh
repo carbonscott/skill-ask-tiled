@@ -34,7 +34,7 @@ run_sync() {
     docs-index index "$TILED_DOCS_DATA_DIR" --incremental --ext md
 
     # Fix permissions for shared access
-    chgrp -R ps-data "$TILED_DOCS_DATA_DIR"
+    chgrp -R ps-users "$TILED_DOCS_DATA_DIR"
     chmod -R g+rX "$TILED_DOCS_DATA_DIR"
 }
 
