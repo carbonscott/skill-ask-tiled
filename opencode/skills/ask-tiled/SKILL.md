@@ -101,4 +101,4 @@ If `TILED_DOCS_ROOT` is still empty after sourcing, offer to run `./setup.sh` in
 - The docs are from the official `bluesky/tiled` repository (GitHub)
 - File format is Markdown (MyST/Sphinx), with one `.rst` file
 - The index also includes README.md, CHANGELOG.md, and example_configs READMEs for additional context
-- To update the index after a `git pull`: `docs-index index "$TILED_DOCS_ROOT" --incremental --ext md`
+- To update the index after a `git pull`: `source /path/to/this/skill/env.sh && docs-index index "$TILED_DOCS_ROOT" --incremental --ext md`
