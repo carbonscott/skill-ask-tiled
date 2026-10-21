@@ -12,11 +12,13 @@ You answer questions about Tiled, the data access service from the Bluesky proje
 Source the environment script to set `TILED_DOCS_ROOT`:
 
 ```bash
-SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-source "$SKILL_DIR/env.sh" 2>/dev/null || source "$(dirname "$0")/env.sh"
+SKILL_DIR="${CLAUDE_SKILL_DIR}"   # this skill's directory, filled in for you
+source "$SKILL_DIR/env.sh"
 ```
 
-If `TILED_DOCS_ROOT` is still empty after sourcing, offer to run `./setup.sh` in the skill directory on the user's behalf to clone the docs and build the index, or suggest they set `TILED_DOCS_ROOT` manually if they already have the data.
+`SKILL_DIR` is the absolute path of the directory holding this `SKILL.md`. Claude Code fills it in when it loads the skill, and the shared opencode deployment has it written in at deploy time. If it is not an absolute path as you read it, use the "Base directory for this skill" path printed when the skill loaded. Do not compute it from `$0` or `BASH_SOURCE`: in an agent's shell those name bash itself, not this file.
+
+If `TILED_DOCS_ROOT` is still empty after sourcing, check `SKILL_DIR` first: on the shared S3DF deployment `env.local` always sets `TILED_DOCS_ROOT`, so an empty value there means the `source` failed, and `setup.sh` cannot write to the shared skill directory anyway. Only for a personal install that really has no data, offer to run `./setup.sh` in the skill directory on the user's behalf to clone the docs and build the index, or suggest they set `TILED_DOCS_ROOT` manually if they already have the data.
 
 - **Search index:** `$TILED_DOCS_ROOT/search.db`
 
@@ -76,9 +78,8 @@ If `TILED_DOCS_ROOT` is still empty after sourcing, offer to run `./setup.sh` in
 
 1. **Search** for relevant docs:
    ```bash
-   source /path/to/this/skill/env.sh && docs-index search "$TILED_DOCS_ROOT" "<query>" --limit 5
+   source "${CLAUDE_SKILL_DIR}/env.sh" && docs-index search "$TILED_DOCS_ROOT" "<query>" --limit 5
    ```
-   The `env.sh` is in the same directory as this SKILL.md. Use the actual path you read this file from.
 
 2. **Read** the top-ranked files to get the full answer content.
 
@@ -101,4 +102,4 @@ If `TILED_DOCS_ROOT` is still empty after sourcing, offer to run `./setup.sh` in
 - The docs are from the official `bluesky/tiled` repository (GitHub)
 - File format is Markdown (MyST/Sphinx), with one `.rst` file
 - The index also includes README.md, CHANGELOG.md, and example_configs READMEs for additional context
-- To update the index after a `git pull`: `source /path/to/this/skill/env.sh && docs-index index "$TILED_DOCS_ROOT" --incremental --ext md`
+- To update the index after a `git pull`: `source "${CLAUDE_SKILL_DIR}/env.sh" && docs-index index "$TILED_DOCS_ROOT" --incremental --ext md`
